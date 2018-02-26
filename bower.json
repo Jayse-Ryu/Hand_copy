@@ -1,0 +1,26 @@
+{
+  "name": "gulpstudy",
+  "description": "gulp study",
+  "main": "index.js",
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bootstrap": "^4.0.0",
+    "bootstrap-sass": "^3.3.7",
+    "material-calendar": "^0.2.14",
+    "jquery-lazy": "^1.7.7"
+  },
+  "dependencies": {
+    "bootstrap-datepicker": "^1.7.1"
+  },
+  "authors": [
+    "jayseryu <dgkim723@hotmail.com>"
+  ]
+}
