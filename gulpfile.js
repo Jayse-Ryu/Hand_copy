@@ -3,6 +3,7 @@ var gulp            = require('gulp'),
     concat          = require('gulp-concat'),
     autoprefixer    = require('gulp-autoprefixer'),
     uglify          = require('gulp-uglify'),
+    minifyjs        = require('gulp-js-minify'),
     browserSync     = require('browser-sync'),
     sourcemaps      = require('gulp-sourcemaps'),
     imagemin        = require('gulp-imagemin'),
@@ -16,7 +17,7 @@ var gulp            = require('gulp'),
     };
 
 
-// Compile scss to css
+// Compile scss to css ++ Combine, Compress, Auto Prefix
 gulp.task('sass_common', function () {
     gulp.src(['scss/**/common.scss'])
         .pipe(sass({
@@ -56,8 +57,9 @@ gulp.task('sass_common', function () {
 });
 
 
-// JavaScript concat and uglify
+// Compile JavaScript ++ Concat, Uglify, Compress, Source Map
 gulp.task('js_common', function () {
+
     gulp.src([
         'js/**/common.js',
         config.bootstrapJs + '/bootstrap.js',
@@ -68,6 +70,7 @@ gulp.task('js_common', function () {
         .pipe(sourcemaps.init())
         .pipe(concat('common.js'))
         .pipe(uglify())
+        .pipe(minifyjs())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/js'));
 
@@ -78,6 +81,7 @@ gulp.task('js_common', function () {
         .pipe(sourcemaps.init())
         .pipe(concat('main.js'))
         .pipe(uglify())
+        .pipe(minifyjs())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/js'));
 
@@ -88,6 +92,7 @@ gulp.task('js_common', function () {
         .pipe(sourcemaps.init())
         .pipe(concat('detail.js'))
         .pipe(uglify())
+        .pipe(minifyjs())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/js'));
 });
@@ -99,7 +104,7 @@ gulp.task('images_comp', function () {
         .pipe(imagemin([
             imagemin.gifsicle({interlaced: true}),
             imagemin.jpegtran({progressive: true}),
-            imagemin.optipng({optimizationLevel: 5}),
+            imagemin.optipng({optimizationLevel: 10}),
             imagemin.svgo({
                 plugins: [
                     {removeViewBox: true},
@@ -111,9 +116,23 @@ gulp.task('images_comp', function () {
 });
 
 
-// Set browser sync for this direction
+// Copy Font files to dist
+gulp.task('fonts', function() {
+    gulp.src('font/*')
+        .pipe(gulp.dest('dist/font'))
+});
+
+
+// Copy Video files to dist
+gulp.task('videos', function () {
+    gulp.src('videos/*')
+        .pipe(gulp.dest('dist/videos'))
+});
+
+
+// Linking browser sync to these directions
 gulp.task('browser-sync', function() {
-    browserSync.init(["dist/*.css", "dist/css/*.css", "dist/*.js", "*.html"], {
+    browserSync.init(["dist/css/*.css", "dist/js/*.js", "dist/images/*", "*.html"], {
 
         server: {
             baseDir: "./"
@@ -122,8 +141,8 @@ gulp.task('browser-sync', function() {
 });
 
 
-// Default running gulp.
-gulp.task('default', ['sass_common', 'js_common', 'images_comp', 'browser-sync'], function () {
+// Default running gulp ++ Watch without Fonts, Videos
+gulp.task('default', ['sass_common', 'js_common', 'images_comp', 'fonts', 'videos', 'browser-sync'], function () {
     gulp.watch("scss/**/*.scss", ['sass_common']);
     gulp.watch("js/**/*.js", ['js_common']);
     gulp.watch("images/*", ['images_comp']);
